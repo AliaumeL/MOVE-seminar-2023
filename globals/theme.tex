@@ -1,8 +1,21 @@
-\usetheme[sectionpage=none,subsectionpage=progressbar]{metropolis}
+\usetheme[sectionpage=none,
+          subsectionpage=progressbar,
+          titleformat=smallcaps,
+          block=fill,
+          progressbar=foot,
+          numbering=fraction]{metropolis}
 \usepackage{appendixnumberbeamer}
 \usepackage[toc,page]{appendix}
+\geometry{paperwidth=170mm,paperheight=105mm}
 
 \usepackage[no-math]{fontspec}
 \setmainfont{Roboto}
 \setsansfont{Andika}
 \setmonofont{Ubuntu Mono}
+
+
+\makeatletter
+\setlength{\metropolis@titleseparator@linewidth}{3pt}
+\setlength{\metropolis@progressonsectionpage@linewidth}{3pt}
+\setlength{\metropolis@progressinheadfoot@linewidth}{3pt}
+\makeatother

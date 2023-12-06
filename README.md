@@ -1,18 +1,13 @@
-# beamer-template
+# Z-Polyregular Functions
 
-A simple beamer template to simplify writing conference presentations.
+Presentation of $\mathbb{Z}$-polyregular functions to the MOVE seminar of the
+LIS at Marseille. This paper was a joint work with [Thomas Colcombet], and
+[Gaëtan Douéneau-Tabot], published under the DOI
+[10.48550/arXiv.2207.07450](https://dx.doi.org/10.48550/arXiv.2207.07450) and
+avialable on arXiv [2207.07450](https://arxiv.org/abs/2207.07450).
 
-## How To Use
+## How to build
 
-Create a new project using this repository as a template.
-Then, rename the file `beamer.tex` into the name of your
-talk. Update the file `globals/metadata.tex` to match
-the description of your talk.
-Finally, write in the 
-
-## Dependencies
-
-- [latemk](https://ctan.org/pkg/latexmk?lang=en)
-- [beamer theme metropolis](https://ctan.org/pkg/beamertheme-metropolis)
-- [inkscape](https://inkscape.org)
-- Fonts: Roboto, Andika New Basic, Ubuntu Mono
+```bash
+make slides.pdf
+```

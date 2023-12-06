@@ -10,13 +10,19 @@
 
 % BOOLEANS
 \NewDocumentCommand{\Bool}{}{\mathbb{B}}
-\NewDocumentCommand{\ind}{ m }{\mathbf{1}_{#1}}
+\NewDocumentCommand{\car}{ m }{\mathbf{1}_{#1}}
+
+\newcommand{\bigO}{\mathcal{O}}
 
 % INTEGERS
 \NewDocumentCommand{\divides}{}{\mathrel{|}}
 
 % FUNCTIONS
 \NewDocumentCommand{\support}{m}{\operatorname{support}(#1)}
+
+
+\newcommand{\isOdd}{\mathsf{isOdd}}
+\newcommand{\isEven}{\mathsf{isEven}}
 
 % MSO, FO, LOGIC
 \NewDocumentCommand{\MSO}{}{\mathsf{MSO}}
@@ -33,7 +39,9 @@
 \NewDocumentCommand{\set}{ m }{\{ {#1} \}}
 \NewDocumentCommand{\setof}{ m O{\mid} m }{\{ {#1} #2 {#3} \}}
 \NewDocumentCommand{\seqof}{ m m }{\left({#1}\right)_{#2}}
-\NewDocumentCommand{\cardinal}{ m }{\mathop{\#}\left[#1\right]}
+\NewDocumentCommand{\card}{ m }{\mathop{\#}\left[#1\right]}
+
+
 
 % PERMUTATIONS
 \NewDocumentCommand{\perm}{}{\sigma}
@@ -56,6 +64,8 @@
     #1_{#2}^\star%
 }
 \NewDocumentCommand{\size}{ O{} m}{ \left| #2 \right|_{#1}}
+
+\newcommand{\Res}{\operatorname{Res}}
 
 % POLYREGULAR
 \NewDocumentCommand{\Npoly}{ O{} }{\Nat\mathsf{P}_{#1}}
