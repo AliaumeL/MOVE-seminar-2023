@@ -1,0 +1,929 @@
+%! TeX program = xelatex
+\documentclass{beamer}
+
+\input{globals/packages}
+\input{globals/colorscheme}
+\input{globals/theme}
+
+\input{globals/macros}
+\input{globals/mathdefs}
+\input{globals/knowledges.kl}
+
+\input{globals/metadata}
+
+
+\tikzset{
+    onslide/.code args={<#1>#2}{
+            \only<#1>{\pgfkeysalso{#2}}
+    },
+}
+
+
+\begin{document}
+
+\begin{frame}[plain,noframenumbering]
+    \maketitle
+\end{frame}
+
+\begin{frame}{Disclaimer \hfill and self promotion?}
+    \begin{block}{I am no expert on transducers!}
+        My interests are in 
+        \begin{itemize}[<+->]
+            \item Finite Model Theory \hfill (first order logic)
+            \item Well-quasi-orderings \hfill (combinatorics)
+            \item Noetherian spaces \hfill (topology)
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\section{Aperiodicity, Star-free, and First-order logic}
+\subsection{Enter a regular language}
+
+\begin{frame}{Regularity and aperiodicity for regular languages}
+    \begin{center}
+\begin{tikzpicture}[
+    scale=1.5,
+    legend/.style={
+        darkgray,dotted, thick,
+        visible on=<2->,
+    },
+    starfree/.style={
+        color=D2,
+        visible on=<1->,
+    },
+    semantic/.style={
+        font=\sf,
+        color=A5,
+    },
+    point/.style={
+        fill=B1,
+        circle,
+        inner sep=2pt,
+        visible on=<2->,
+    },
+    class/.style={
+        color=A4,
+        font=\sf\large,
+        execute at begin node={\begin{varwidth}{2.8cm}},
+        execute at end node = {\end{varwidth}},
+        minimum width=2.25cm,
+    },
+    example/.style={
+        color=darkgray,
+        fill=D1!15,
+        visible on=<2->,
+    }
+    ]
+    \fill[class,D4!30] (0,0) circle (2);
+    \fill[starfree,D3!30] (0,-0.7) circle (1.3);
+
+    \node[class] at (0,1.5) {Regular \newline Languages};
+    \node[class,starfree] at (0,-0.7) {Star-Free \newline Languages};
+
+    \draw (-3.5,1.8) node[semantic]  {Finite Automaton};
+    \draw (-3.5,1.4) node[semantic]  {Finite Monoid};
+    \draw (-3.5,1)   node[semantic]  {MSO Sentence};
+
+    \draw (-3.5,-0.4) node[semantic,starfree]  {Counter-free Automaton};
+    \draw (-3.5,-0.8) node[semantic,starfree]  {Aperiodic Monoid};
+    \draw (-3.5,-1.2) node[semantic,starfree]  {FO Sentence};
+
+    %\draw (0,2.9) node[semantic]  {$\bigO(n^2)$~growth};
+    %\draw (0,1.7) node[semantic]  {$\bigO(n)$~growth};
+    %\draw (0,0.5) node[semantic]  {$\bigO(1)$~growth};
+
+    \node[point] (P1) at (0.9,-0.1) {};
+    \node[point] (P2) at (1.5,1.1) {};
+    \node[example, anchor=west] (E1) at (2.5,-0.1) {$\car{|w|_a \geq 3}$};
+    \node[example, anchor=west] (E2) at (2.5,1.1) {$\car{\isOdd}$};
+    \draw[legend] (P1) -- (E1.west);
+    \draw[legend] (P2) -- (E2.west);
+\end{tikzpicture}
+\end{center}
+Decidability of the membership problem follows from
+the effective equivalence with aperiodic monoids
+\cite{schutzenberger1965finite}.
+\end{frame}
+
+\subsection{What about functions?}
+
+\begin{frame}{Brief overview of aperiodicity for functions (or relations)}
+    \begin{equation*}
+        L \colon \words \to \Bool
+    \end{equation*}
+    \pause
+    \begin{equation*}
+        f \colon \words \to \words[\Gamma]
+    \end{equation*}
+    \pause
+    \begin{center}
+        \begin{tabular}{lr}
+            \toprule
+            \textbf{Computational Model} & \textbf{Decidable aperiodicity} \\
+            \midrule
+            $f \subseteq \words[(\Sigma \times \Gamma)]$
+                is a regular language
+            & \okmark \cite{schutzenberger1965finite}
+            \\
+            $f$ is  sequential
+            & \okmark \cite{choffrut03}
+            \\
+            $f$ is  rational 
+            & \okmark \cite{filiot2016aperiodicity}
+            \\
+            $f$ is regular 
+            & $\approx$ \cite{bojanczyk14}
+            \\
+            $f$ is polyregular 
+            & ?
+            \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+\end{frame}
+
+\begin{frame}[standout]
+    In this talk:
+
+    polyregular functions
+\end{frame}
+
+\subsection{Simplifying until it trivialises}
+
+\begin{frame}{Careful choice of output}
+    \begin{block}{Arbitrary polyregular functions}
+        \begin{equation*}
+            f \colon \words \to \words[\Gamma]
+        \end{equation*}
+    \end{block}
+    \pause
+    \begin{block}{Unary output polyregular functions $\Gamma = \set{1}$}
+        \begin{equation*}
+            f \colon \words \to \words[\set{1}] \simeq (\Nat,+)
+        \end{equation*}
+        Also known as $\Nat$-polyregular functions.
+    \end{block}
+    \pause
+    \begin{block}{$\Rel$-output polyregular functions}
+        \begin{equation*}
+            f \colon \words \to \words[\set{+1, -1}]
+        \end{equation*}
+        Casted to $(\Rel,+)$ by post-composition with $\sum$.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Simplifications}
+    \begin{alertblock}{The many advantages of $\Rel$-output}
+        \begin{itemize}
+            \item Commutative ouptut! (no ordering needed)
+            \item Invertible output! (bounded backtracking is possible)
+            \item Simpler definitions! (to be seen)
+            \item Reduces to \emph{counting} (rational series)
+        \end{itemize}
+    \end{alertblock}
+    \pause
+    \begin{alertblock}{Disatvantages}
+        \begin{itemize}
+            \item The function $\sum \colon \words[\set{-1,+1}] \to \Rel$
+                is \emph{not} regular.
+            \item Non trivial compensations arise in the output.
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\section{$\Rel$-polyregular functions}
+\subsection{From a database person’s perspective}
+
+\begin{frame}{From languages to functions via free variables}
+    \begin{theorem}[Languages and $\MSO$ \cite{buchi1960weak}]
+        A language $L$ is regular
+        iff there exists a \textbf{sentence}
+        $\varphi \in \MSO$
+        such that $L = \car{\varphi}$.
+    \end{theorem}
+    \pause
+    \begin{center}
+        What if $\varphi$ was not a \emph{sentence}?
+    \end{center}
+    \begin{definition}[Counting first order valuations]
+        \begin{equation*}
+            \card{\varphi(\vec{x})}
+            \colon 
+            w \mapsto
+            \card{\setof{\vec{a} \in w}{w, \vec{a} \models \varphi(\vec{x})}}
+            \quad .
+        \end{equation*}
+    \end{definition}
+    \pause
+    \begin{exampleblock}{Remark}
+        This is connected to ``counting automata" \cite{schutzenberger1962}.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{$\Rel$-polyregular functions \hfill \ldots it was about time!}
+    \begin{equation*}
+        \Zpoly \defined
+        \Span{\setof{\card{\varphi(\vec{x})}}{\varphi(\vec{x}) \in \MSO}}
+    \end{equation*}
+    \pause
+    \begin{equation*}
+        \Zpoly[k] \defined
+        \Span{\setof{\card{\varphi(x_1, \dots, x_k)}}{\varphi(x_1, \dots, x_k) \in \MSO}}
+    \end{equation*}
+\end{frame}
+
+\subsection{Pop Quizz}
+
+\begin{frame}{Which of these functions are $\Rel$-polyregular?}
+    \begin{itemize}
+        \item $\car{L}$ for some language $L$? 
+            \pause \hfill \nokmark
+        \item $\car{L}$ for some \textbf{regular} language $L$? 
+            \pause \hfill \okmark
+        \item $w \mapsto \size{w}$
+            \pause \hfill \okmark
+        \item $w \mapsto \size[a]{w} \times \size[b]{w} - \size[c]{w}^2$
+            \pause \hfill \okmark
+        \item $w \mapsto 2^{\size{w}}$
+            \pause \hfill \nokmark
+        \item $w \mapsto (-1)^{\size{w}}$
+            \pause \hfill \okmark
+        \item $w \mapsto (-1)^{\size{w}} \times |w|$
+            \pause \hfill \okmark
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{On the limits of growth}
+    \begin{block}{Functions $f \in \Zpoly$ have polynomial growth rate}
+        For all $f$, there exists $k \in \Nat$, such that
+        \begin{equation*}
+            \size{f(w)} = \bigO(\size{w}^k)
+        \end{equation*}
+    \end{block}
+    \pause
+    This is actually true for all polyregular functions 
+    \cite{bojanczyk2019string}.
+\end{frame}
+
+\begin{frame}{A frequently redefined concept?}
+    \begin{center}
+        \begin{tabular}{lr}
+            \toprule
+            \textbf{Name} & \textbf{Reference} \\
+            \midrule
+            Finite Counting Automata & \cite{schutzenberger1962} \\
+            Rational series of polynomial growth & \cite{berstel2011noncommutative} \\
+            Rational series without kleene star &  --- \\
+            Weighted automata of polynomial ambiguity & \cite{kreutzer2013,poly:CDL23} \\
+            Polyregular functions
+            (post composed with $\sum$) & \cite{bojanczyk2019string} \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+    Membership is decidable and conversions are effective
+    between these classes \cite[see, e.g.][]{poly:CDL23}.
+\end{frame}
+
+\section{Aperiodicity}
+\subsection{Which is what we cared about?}
+
+
+\begin{frame}{Pop Quizz (again?!)}
+    Which of the following functions \textbf{should be} aperiodic?
+    \begin{itemize}
+        \item $\car{L}$ for some \textbf{regular} language $L$? 
+            \pause \hfill \nokmark
+        \item $\car{L}$ for some \textbf{star-free} language $L$? 
+            \pause \hfill \okmark
+        \item $w \mapsto \size{w}$
+            \pause \hfill \okmark
+        \item $w \mapsto \size[a]{w} \times \size[b]{w} - \size[c]{w}^2$
+            \pause \hfill \okmark
+        \item $w \mapsto (-1)^{\size{w}}$
+            \pause \hfill \nokmark
+        \item $w \mapsto (-1)^{\size{w}} \times |w|$
+            \pause \hfill \nokmark
+        \item $w \mapsto (\size[a]{w} - \size[b]{w})^2$
+            \pause \hfill \okmark
+    \end{itemize}
+    \pause
+    \begin{alertblock}{Please notice}
+        For the last function, the pre-image of $\set{0}$ is not a regular
+        language \ldots
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Existing notions of aperiodicity}
+    \begin{block}{Following the definition of  \citeauthor{droste2019aperiodic} \cite{droste2019aperiodic}}
+        The function $w \mapsto (-1)^{\size{w}}$ is aperiodic.
+    \end{block}
+    \pause
+    \begin{block}{Following the definition of  \citeauthor{reutenauer_series_1980} \cite{reutenauer_series_1980}}
+        The function $w \mapsto (-1)^{\size{w}}$ is aperiodic.
+    \end{block}
+    \pause
+    I tricked you to agree with me.
+\end{frame}
+
+\subsection{A reasonable notion of aperiodicity?}
+
+\begin{frame}{Star-free $\Rel$-polyregular functions}
+    \begin{equation*}
+        \Zsf \defined
+        \Span{\setof{\card{\varphi(\vec{x})}}{\varphi(\vec{x}) \in \FO}}
+    \end{equation*}
+    \pause
+    \begin{equation*}
+        \Zsf[k] \defined
+        \Span{\setof{\card{\varphi(x_1, \dots, x_k)}}{\varphi(x_1, \dots, x_k) \in \FO}}
+    \end{equation*}
+\end{frame}
+
+
+\begin{frame}{Our Results: Effective decision procedures.}
+    \resizebox{0.99\linewidth}{!}{
+\begin{tikzpicture}[
+    scale=1.5,
+    legend/.style={
+        darkgray,dotted, thick,
+        visible on=<3->,
+    },
+    starfreeTitle/.style={
+        color=D2,
+        visible on=<2->,
+    },
+    starfree/.style={
+        color=D2,
+        visible on=<5->,
+    },
+    semantic/.style={
+        font=\sf,
+        color=A5,
+        visible on=<4->,
+    },
+    point/.style={
+        fill=B1,
+        circle,
+        inner sep=2pt,
+        visible on=<3->,
+    },
+    class/.style={
+        color=A4,
+        font=\sf\large,
+        execute at begin node={\begin{varwidth}{2.8cm}},
+        execute at end node = {\end{varwidth}},
+        minimum width=2.2cm,
+    },
+    example/.style={
+        color=darkgray,
+        fill=D1!15,
+        minimum width=3.5cm,
+        rounded corners=5mm,
+        minimum height=1.6cm,
+        execute at begin node={\begin{varwidth}{3cm}},
+        execute at end node = {\end{varwidth}},
+        visible on=<3->,
+    }
+    ]
+    \def\gellipse{(0,2.4) ellipse (4cm and 3cm)}
+    \def\aellipse{(0,1.8) ellipse (3.5cm and 2.5cm)}
+    \def\bellipse{(0,1.2) ellipse (3cm and 1.9cm)}
+    \def\cellipse{(0,0.6) ellipse (2.5cm and 1.3cm)}
+    \def\dellipse{(0,0) ellipse (1.7cm and 0.7cm)}
+    \fill[D4!7] \gellipse;
+    \fill[D4!14]  \aellipse;
+    \fill[visible on=<4->, D4!26] \bellipse ;
+    \fill[visible on=<4->, D4!38]  \cellipse;
+    \fill[visible on=<4->, D4!50] \dellipse;
+
+
+    \def\rellipse{(-2.2,1.8) ellipse (2.1cm and 3cm)}
+    \begin{scope}[visible on=<2->]
+        \clip {\aellipse};
+        \fill[D3!5] \rellipse;
+    \end{scope}
+
+    \begin{scope}[visible on=<4->]
+        \clip {\bellipse};
+        \fill[D3!20] \rellipse;
+    \end{scope}
+
+    \begin{scope}[visible on=<4->]
+        \clip {\cellipse};
+        \fill[D3!35] \rellipse;
+    \end{scope}
+
+    \begin{scope}[visible on=<4->]
+        \clip {\dellipse};
+        \fill[D3!50] \rellipse;
+    \end{scope}
+
+    \node[class] at (0,4.8) {$\Rel$-rational};
+
+    \node[class] at (0,3.6) {$\Rel$-polyregular};
+    \node[class,starfreeTitle] at (-1.85,3.25) {Star-free $\Rel$-polyregular};
+
+    \node[class,starfree] at (-1,0.04)  {$\Zsf[0]$};
+    \node[class,starfree] at (-1.4,1.1) {$\Zsf[1]$};
+    \node[class,starfree] at (-1.7,2.2) {$\Zsf[2]$};
+
+    \node[class,visible on=<5->] at (0,0)    {$\Zpoly[0]$};
+    \node[class,visible on=<5->] at (0,1.2)  {$\Zpoly[1]$};
+    \node[class,visible on=<5->] at (0,2.4)  {$\Zpoly[2]$};
+
+    \draw (0,4.1) node[semantic]  {Polynomial~growth};
+    \draw (0,2.9) node[semantic]  {$\bigO(n^2)$~growth};
+    \draw (0,1.7) node[semantic]  {$\bigO(n)$~growth};
+    \draw (0,0.5) node[semantic]  {$\bigO(1)$~growth};
+
+    \node[point] (P1) at (0.9,-0.1) {};
+    \node[example, anchor=west] (E1) at (4,-0.1) {
+                $w \mapsto \mathbf{1}_L(w)$ \newline if $L$ is regular but not star-free
+            };
+    \draw[legend] (P1) -- (E1);
+
+    \node[point] (P2) at (1.2,1) {};
+    \node[example,anchor=west] (E2) at (4,1) {$w \mapsto |w|\times (-1)^{|w|}$};
+    \draw[legend] (P2) -- (E2);
+
+    \node[point] (P3) at (-1.1,-0.3) {};
+    \node[example, anchor=east] (E3) at (-4,-0.3) {$w \mapsto \mathbf{1}_L(w)$
+            \newline if
+        $L$ is star-free};
+    \draw[legend] (P3) -- (E3);
+
+    \node[point] (P4) at (-2.5,1.5) {};
+    \node[example,left] (E4) at (-4,1.5) {$w \mapsto |w|_a \times |w|_b$ 
+        \newline if $a,b \in A$};
+    \draw[legend] (P4) -- (E4);
+
+    \node[point] (P5) at (2.5,4.5) {};
+    \node[example,anchor=west] (E5) at (4,4.55)
+        {$w \mapsto (-2)^{|w|}$};
+    \draw[legend] (P5) -- (E5);
+\end{tikzpicture}
+}
+\end{frame}
+
+\section{Proofs?}
+
+\subsection{Deciding growth rate}
+
+\begin{frame}{It is non trivial}
+    \begin{equation*}
+        f(w) \defined
+        \card{\mathsf{isOdd}(x)}
+        - 
+        \card{\mathsf{isEven}(x)}
+        \quad 
+        \in \Zpoly[1]
+    \end{equation*}
+    \pause
+    Growth rate? Number of free variables?
+    Equivalent function?
+    \pause
+    \begin{equation*}
+        f(w) = - \car{\isOdd} \quad \in \Zpoly[0]
+    \end{equation*}
+\end{frame}
+
+\begin{frame}{Semantic Characterisation}
+    \begin{definition}[Pumpable function]
+        A function $f \colon \words \to \Rel$ is $k$-pumpable
+        whenever there exists
+        $\alpha_0, \dots, \alpha_k \in \words$,
+        $w_1, \dots, w_k \in \words$,
+        such that 
+        \begin{equation*}
+            \size{f(\alpha_0 \prod_{i = 1}^k w_i^{X_i} \alpha_i)}
+            = 
+            \Omega(\size{X_1 + \dots + X_k}^k)
+        \end{equation*}
+    \end{definition}
+    \pause
+    That is, one can observe a growth rate at least $k$ by iterating patterns.
+\end{frame}
+
+\begin{frame}{General proof, on an example}
+    \begin{equation*}
+        f \defined
+        \card{\mathsf{isOdd}(x)}
+        - 
+        \card{\mathsf{isEven}(x)}
+        \quad 
+        \in \Zpoly[1]
+    \end{equation*}
+    \begin{center}
+        \begin{tikzpicture}[
+               prod/.style={
+                    opacity=0,
+                    onslide=<2->{
+                        opacity=1
+                    },
+                    minimum height=2em
+                },
+                monoid/.style={
+                    opacity=0,
+                    onslide=<3->{
+                        opacity=1
+                    }
+                },
+                simon/.style={
+                    opacity=0,
+                    onslide=<4->{
+                        opacity=1
+                    }
+                },
+                skel/.style={
+                    opacity=0,
+                    rounded corners=2mm,
+                    onslide=<5->{
+                        opacity=1,
+                        draw=none,
+                        fill=A4!10,
+                    }
+                },
+            ]
+            \node[skel,anchor=east] (S) at (-1, 3) {Skeletons};
+            \node[simon,anchor=east] (S) at (-1, 2) {Factorisation \cite{simon1990factorization}};
+            \node[monoid,anchor=east] (M) at (-1,1) {$M \defined (\Rel/2\Rel,+)$};
+            \node[prod,anchor=east]   (P) at (-1,-1) {Production};
+            \foreach \x in {1,...,9} {
+                \node[monoid] (M\x) at (\x,1) {$1$};
+                \node (A\x) at (\x,0) {$a$};
+            }
+            \foreach \x in {1,3,...,9} {
+                \node[prod] (Pr\x) at (\x,-1) {$+1$};
+            }
+            \foreach \x in {2,4,...,8} {
+                \node[prod] (Pr\x) at (\x,-1) {$-1$};
+            }
+
+            \foreach[count=\y] \x in {2,4,...,8} {
+                \pgfmathsetmacro{\xy}{(\x + 2 * \y - 1) / 2}
+                \pgfmathsetmacro{\left}{int(2 * \y - 1)}
+                \node[simon] (P\y) at (\xy,2) {0};
+                \draw[simon] (M\left) -- (P\y);
+                \draw[simon] (M\x) -- (P\y);
+            }
+
+            \node[simon] (E) at (4.5, 3) {0};
+            \foreach \y in {1,...,4} {
+                \draw[simon] (P\y) -- (E);
+            }
+            \node[simon] (R) at (7.5, 4) {1};
+            \draw[simon] (E) -- (R);
+            \draw[simon] (M9) -- (R);
+
+            \begin{scope}[on background layer]
+                \draw[skel] (M3.south east) -- (M3.south west) -- (P2.north west) --
+                    (P2.north east) -- (M4.south east) -- (M4.south west) -- cycle;
+                \draw[skel] (M5.south east) -- (M5.south west) -- (P3.north west) --
+                    (P3.north east) -- (M6.south east) -- (M6.south west) -- cycle;
+
+                \draw[skel,fill=A2!10]
+                    (M1.south east) -- (M1.south west) -- (P1.north west) --
+                    (P1.north east) -- (M2.south east) -- (M2.south west) -- cycle;
+                \draw[skel,fill=A2!10]
+                    (M7.south east) -- (M7.south west) -- (P4.north west) --
+                    (P4.north east) -- (M8.south east) -- (M8.south west) -- cycle;
+
+                \draw[skel,fill=A2!10]
+                    (M9.south west) -- (R.south west) -- (R.north west) -- (R.north east) -- 
+                    (M9.north east) -- (M9.south east)-- cycle;
+                \draw[skel,fill=A2!10]
+                    (E.south east) -- (R.south east) -- (R.north east) -- 
+                    (R.north west) -- (E.north west) -- (E.south west) --
+                    cycle;
+                \draw[skel,fill=A2!10]
+                    (P1.north west) -- 
+                    (E.north west) -- (E.north east) -- (E.south east) --
+                    (P1.south east) -- (P1.south west) -- cycle;
+                \draw[skel,fill=A2!10]
+                    (P4.north east) -- 
+                    (E.north east) -- (E.north west) -- 
+                    (E.south west) -- (P4.south west) -- (P4.south west) 
+                    -- (P4.south east)
+                    -- cycle;
+
+            \end{scope}
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Characterisations}
+    \begin{theorem}
+        The following are equivalent for functions $f \colon \words \to \Rel$
+        and $k \in \Nat$:
+        \begin{enumerate}
+            \item $f \in \Zpoly[k]$.
+            \item $f$ is the post-composition of a 
+                polyregular function of growth rate $k$ with the $\sum$ operator.
+            \item $f$ is in the closure of regular languages
+                under $\otimes$, $+$, and $z_i \cdot \square$
+                and $f$ has growth rate $k$.
+            \item $f$ is a rational series and
+                $f$ is \textbf{not} $k+1$ pumpable.
+            \item $f$ has a residual transducer of depth $k$.
+            \item $f$ is computed by a weighted automata of
+                ambiguity $\bigO(|w|^k)$.
+        \end{enumerate}
+
+        Every conversion is effective.
+    \end{theorem}
+\end{frame}
+
+\subsection{Deciding aperiodicity}
+
+\begin{frame}{Semantic Characterisation}
+    \begin{definition}[Ultimately polynomial function]
+        A function $f \colon \words \to \Rel$ is ultimately $N$-polynomial
+        whenever for all 
+        $k \in \Nat$,
+        $\alpha_0, \dots, \alpha_k \in \words$,
+        $w_1, \dots, w_k \in \words$, there exists $P \in \Rat[X_1, \dots, X_k]$
+        such that  for large enough $X_1, \dots, X_k$,
+        \begin{equation*}
+            f(\alpha_0 \prod_{i = 1}^k w_i^{N X_i} \alpha_i)
+            =
+            P(X_1, \dots, X_k)
+        \end{equation*}
+    \end{definition}
+    \pause
+    All $\Rel$-polyregular functions are ultimately $N$-polynomial.
+    \pause
+    Star free $\Rel$-polyregular functions are ultimately $1$-polynomial!
+\end{frame}
+
+\begin{frame}{Star-free \ldots graphically}
+    \begin{center}
+        \begin{tikzpicture}[
+            const0/.style={
+                opacity=0,
+                draw=A5,
+                onslide=<2>{
+                    opacity=1,
+                    ultra thick,
+                },
+                onslide=<2->{
+                    opacity=1
+                }
+            },
+            const1/.style={draw=B5,
+                opacity=0,
+                onslide=<4>{
+                    opacity=1,
+                    ultra thick,
+                },
+                onslide=<4->{
+                    opacity=1
+                }
+            },
+            oscil0/.style={draw=A2,
+                opacity=0,
+                onslide=<6>{
+                    opacity=1,
+                    ultra thick,
+                },
+                onslide=<6->{
+                    opacity=1
+                }
+            },
+            oscil1/.style={draw=C2,
+                opacity=0,
+                onslide=<8>{
+                    opacity=1,
+                    ultra thick,
+                },
+                onslide=<8->{
+                    opacity=1
+                }
+            },
+            ]
+            \draw[->] (0,0) -- (8.5,0);
+            \draw[->] (0,0) -- (0,1.5);
+            \node at (0,-0.3) {$0$};
+            \node at (8,-0.3) {$8$};
+            \node at (-0.3,1) {$1$};
+            \draw (-0.1,1) -- (0.1,1);
+
+            \foreach \xi in {0,...,8} {
+                \draw (\xi,-0.1) -- (\xi,0.1);
+            }
+            \foreach[count=\name] \xi/\yi in
+            {0/0,1/1,2/0,3/1,4/0,5/1,6/0,7/1,8/0} {
+                \coordinate (ODD1AT\name) at (\xi,\yi);
+            }
+            \foreach[count=\xi] \xip in {2,...,9} {
+                \draw[oscil0] (ODD1AT\xi) -- (ODD1AT\xip);
+            }
+            \foreach[count=\name] \xi/\yi in
+            {0/1,1/0,2/1,3/0,4/1,5/0,6/1,7/0,8/1} {
+                \coordinate (ODD2AT\name) at (\xi,\yi);
+            }
+            \foreach[count=\xi] \xip in {2,...,9} {
+                \draw[oscil1] (ODD2AT\xi) -- (ODD2AT\xip);
+            }
+
+            \draw[const1] (0,1) -- (8,1);
+            \draw[const0] (0,0) -- (8,0);
+
+            \node[anchor=west,const0] at (9, 0)  {$\car{\isOdd}((aa)^X)$};
+            \node[anchor=west,const1] at (11.5, 0)  {$\car{\isOdd}(a(aa)^X)$};
+            \node[anchor=west,oscil0] at (9, 0.8)  {$\car{\isOdd}(a^X)$};
+            \node[anchor=west,oscil1] at (11, 0.8)  {$\car{\isOdd}(aa^X)$};
+
+        \end{tikzpicture}
+    \end{center}
+
+    \onslide<10->{
+    \begin{center}
+        \begin{tikzpicture}[curve/.style={draw=B2,thick,opacity=0.7}]
+            \draw[->] (0,0) -- (8.5,0);
+            \draw[->] (0,0) -- (0,1.5);
+            \node at (0,-0.3) {$0$};
+            \node at (8,-0.3) {$8$};
+            \node at (3,-0.3) {$3$};
+            \node at (-0.3,1) {$1$};
+            \draw (-0.1,1) -- (0.1,1);
+
+
+            \foreach \xi in {0,...,8} {
+                \draw (\xi,-0.1) -- (\xi,0.1);
+            }
+
+            \draw[curve] (0,0) -- (8,0);
+            \draw[curve] (0,1) -- (8,1);
+
+            \foreach[count=\name] \xi/\yi in
+            {0/0,1/1,8/1} {
+                \coordinate (SIZ1AT\name) at (\xi,\yi);
+            }
+            \foreach[count=\xi] \xip in {2,...,3} {
+                \draw[curve] (SIZ1AT\xi) -- (SIZ1AT\xip);
+            }
+
+            \foreach[count=\name] \xi/\yi in
+            {0/0,1/0,2/1,8/1} {
+                \coordinate (SIZ2AT\name) at (\xi,\yi);
+            }
+            \foreach[count=\xi] \xip in {2,...,4} {
+                \draw[curve] (SIZ2AT\xi) -- (SIZ2AT\xip);
+            }
+            \foreach[count=\name] \xi/\yi in
+            {0/0,1/0,2/0,3/1,8/1} {
+                \coordinate (SIZ3AT\name) at (\xi,\yi);
+            }
+            \foreach[count=\xi] \xip in {2,...,4} {
+                \draw[curve] (SIZ3AT\xi) -- (SIZ3AT\xip);
+            }
+
+
+            \node[anchor=west,opacity=0] 
+                at (9, 0)  {$\car{\isOdd}((aa)^X)$};
+            \node[anchor=west,opacity=0]
+                at (11.5, 0)  {$\car{\isOdd}(a(aa)^X)$};
+            \node[anchor=west,opacity=0] 
+                at (9, 0.8)  {$\car{\isOdd}(a^X)$};
+            \node[anchor=west,opacity=0]
+                at (11, 0.8)  {$\car{\isOdd}(aa^X)$};
+
+            \node[anchor=west]
+                at (9, 0.8)  {$\car{|w|_a \geq 3}$};
+        \end{tikzpicture}
+    \end{center}
+    }
+\end{frame}
+
+\begin{frame}{Residuals!}
+    \begin{definition}[Residuals of a function $f$]
+        \begin{equation*}
+             f(u -) \colon w \mapsto f(uw)
+         \end{equation*}
+         \begin{equation*}
+         \Res(f) \defined \setof{f(u -)}{u \in \words}
+         \end{equation*}
+    \end{definition}
+    \pause
+    \begin{theorem}
+        If $f \in \Zpoly[k]$, then
+        $\Res(f) / \Zpoly[k-1]$ is finite!
+    \end{theorem}
+    \pause
+    \begin{center}
+        ``$f$ is a deterministic transducer \textbf{up to lower degree errors}"
+    \end{center}
+\end{frame}
+
+\begin{frame}{Residual transducer on an example}
+    \begin{equation*}
+        f(w) \defined (-1)^{\size{w}} \times \size{w}
+        \quad 
+        \in \Zpoly[1]
+    \end{equation*}
+    \pause
+    \begin{block}{Residuals up to constant growth}
+        \begin{itemize}
+            \item $f$ \pause
+            \item $f(a-)$? 
+                \pause $f(aw) - f(w) = (-1)^{|w| + 1} \times ( 1 + 2|w| )$
+                \pause \nokmark
+            \item $f(aa-)$? 
+                \pause
+                $g \defined f(aaw) - f(w)
+                = 2 \times (-1)^{|w|}$
+                \pause 
+                \okmark
+            \item And we have exhausted equivalence classes.
+        \end{itemize}
+    \end{block}
+    \pause
+\end{frame}
+\begin{frame}{Residual transducer on an example}
+    \begin{equation*}
+        f(w) \defined (-1)^{\size{w}} \times \size{w}
+        \quad 
+        \in \Zpoly[1]
+    \end{equation*}
+    \begin{equation*}
+        g(w) \defined f(aaw) - f(w) = 2 \times (-1)^{|w|} \in \Zpoly[0]
+    \end{equation*}
+    \begin{center}
+        \begin{tikzpicture}{scale=1}
+            \node [state, initial, initial text=, inner sep=3pt, minimum size=0pt,
+                accepting above, accepting text = $0$ ]
+            (q0) at (0,0) {\small $f(-)$};
+            \node[state ,  inner sep=3pt, minimum size=0pt, accepting right,
+                accepting text = $-1$ ] at (2,0) (q1) {\small $f(a-)$};
+            \draw[->] (q0) edge[bend left = 40] node[above]{$a~|~0$} (q1);
+            \draw[->] (q1) edge[bend left = 40]
+                node[below]{$a~|~ w \mapsto g(w)$} (q0);
+        \end{tikzpicture}
+    \end{center}
+    \pause
+    \begin{align*}
+        f(aaaa) &= 0 + f(a \mid aaa) = 0 + g(aa) + f(aa) \\
+                 &= 0 + g(aa) + 0 + f(a \mid a) \\
+                 &= 0 + g(aa) + 0 + g(\varepsilon) + f(\varepsilon) \\
+                 &= 0 + 2 + 0 + 2 + 0 = 4
+    \end{align*}
+\end{frame}
+
+\begin{frame}{Characterisations}
+    \begin{theorem}
+        The following are equivalent for a $\Rel$-rational series $f$
+        \begin{enumerate}
+            \item  $f \in \Zsf$.
+            \item $f$ is the post-composition of a star-free
+                polyregular function with the $\sum$ operator.
+            \item $f$ is in the closure of star-free languages
+                under $\otimes$, $+$, and $z_i \cdot \square$.
+            \item $f$ is ultimately $1$-polynomial (with $k = 1$).
+            \item Minimal representations of $f$ have eigenvalues
+                in $\set{0,1}$.
+            \item The residual transducer of $f$ is counter-free.
+        \end{enumerate}
+
+        Every conversion is effective.
+    \end{theorem}
+    \pause
+    Furthermore, $\Zsf[k] = \Zsf \cap \Zpoly[k]$!
+\end{frame}
+
+\section{Beyond $\Rel$?}
+
+\subsection{Outlook and future work}
+
+\begin{frame}{Outlook}
+    \begin{block}{Open questions}
+        \begin{itemize}
+            \item Deciding aperiodicity for $\Nat$-polyregular functions?
+                (based on ideas from \cite{colcombet2022countable})
+            \item Deciding $\Nat$-polyregular inside $\Rel$-polyregular?
+                (note that \cite{rational:KARH77} is not true)
+            \item $\Nsf = \Npoly \cap \Zsf$?
+            \item Defining aperiodicity for $\Rel$-rational series in general?
+                (with eigenvalues)
+        \end{itemize}
+    \end{block}
+    \pause
+    \begin{block}{Slightly related question}
+        Decide if a class of graphs with bounded linear clique-width
+        is well-quasi-ordered?
+    \end{block}
+\end{frame}
+
+
+
+
+
+\begin{frame}[allowframebreaks]{Bibliography}
+    \printbibliography[heading=none]
+\end{frame}
+
+\appendix
+
+\begin{frame}{Backup Frame}
+\end{frame}
+
+\end{document}
